@@ -1,8 +1,133 @@
-
 import Head from 'next/head';
+import { useRouter } from 'next/router';
+import { useState } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+export default function Home({ data }) {
 
 
-export default function Home() {
+  const [name, setname] = useState('');
+  const [age, setage] = useState("");
+  const [address, setaddress] = useState('');
+  const [uname, setuname] = useState('');
+  const [uage, setuage] = useState("");
+  const [uaddress, setuaddress] = useState('');
+  const [disable, setdisable] = useState(false);
+
+  //current update id 
+  const [updateId, setupdateId] = useState("");
+
+  //router
+  const router = useRouter();
+
+
+  //handle post click function
+  async function handlePostClick() {
+
+    if (name !== "" && age !== "" && address !== "") {
+      const respose = await fetch("http://localhost:3000/api", {
+        method: "POST",
+        headers: {
+          "Content-Type": "Application/json",
+        },
+        body: JSON.stringify({
+          name,
+          age,
+          address
+        })
+      });
+
+      const res = await respose.json();
+
+      if (res.success) {
+        setname('');
+        setage('');
+        setaddress('');
+        router.replace(router.asPath);
+        toast.success(res.messege);
+      } else {
+        toast.warning(res.messege);
+      }
+    } else {
+      toast.warning("Enter All Filled");
+    }
+
+
+  }
+
+
+
+  //handle edite click function
+  async function handleEditClick(id) {
+    setdisable(true);
+    const respose = await fetch(`http://localhost:3000/api/${id}`);
+    const res = await respose.json();
+    setuname(res.data[0].name);
+    setuage(res.data[0].age);
+    setuaddress(res.data[0].address);
+    setupdateId(res.data[0].id);
+  }
+
+
+
+
+
+
+
+  // handle delete click function
+  async function handleDeleteClick(id) {
+
+    const respose = await fetch(`http://localhost:3000/api/${id}`, {
+      method: "DELETE",
+    });
+    const res = await respose.json();
+    if (res.success) {
+      router.replace(router.asPath);
+      toast.success(res.messege);
+    } else {
+      toast.warning(res.messege);
+    }
+
+  }
+
+
+
+  //handle update Click Function
+  async function handleUpdateClick() {
+    const respose = await fetch(`http://localhost:3000/api/${updateId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "Application/json"
+      },
+      body: JSON.stringify({
+        uname,
+        uage,
+        uaddress
+      })
+    });
+    const res = await respose.json();
+    if (res.success) {
+      toast.success(res.messege);
+      setdisable(false);
+      setupdateId('');
+      router.replace(router.asPath);
+      setuname("");
+      setuage("");
+      setuaddress('');
+
+    } else {
+      toast.warning(res.messege);
+    }
+
+
+  }
+
+
+
+
+
+
   return (
     <>
       <Head>
@@ -17,21 +142,21 @@ export default function Home() {
           <div className='col-sm-12 col-md-6 col-lg-6 border p-4'>
             <h3 className='text-center pb-3'>Create</h3>
             <div className='wper'>
-              <input className='mt-2 mb-2 text-center w-100' type="text" placeholder='Enter your name' />
-              <input className='mt-2 mb-2 text-center w-100' type="number" placeholder='Enter your age' />
-              <input className='mb-2 mt-2 text-center w-100' type="text" placeholder='Enter your Address' />
+              <input disabled={disable} value={name} onChange={(e) => setname(e.target.value)} className='mt-2 mb-2 text-center w-100' type="text" placeholder='Enter your name' />
+              <input disabled={disable} value={age} onChange={(e) => setage(e.target.value)} className='mt-2 mb-2 text-center w-100' type="number" placeholder='Enter your age' />
+              <input disabled={disable} value={address} onChange={(e) => setaddress(e.target.value)} className='mb-2 mt-2 text-center w-100' type="text" placeholder='Enter your Address' />
               <br />
-              <button className='btn text-light bg-success text-center w-100 mt-2 mb-2'>Insert</button>
+              <button disabled={disable} onClick={() => handlePostClick()} className='btn text-light bg-success text-center w-100 mt-2 mb-2'>Insert</button>
             </div>
           </div>
           <div className='col-sm-12 col-md-6 col-lg-6 border p-4'>
             <h3 className='text-center pb-3'>Update</h3>
             <div className='wper'>
-              <input className='mt-2 mb-2 text-center w-100' type="text" placeholder='Enter your name' />
-              <input className='mt-2 mb-2 text-center w-100' type="number" placeholder='Enter your age' />
-              <input className='mt-2 mb-2 text-center w-100' type="text" placeholder='Enter your Address' />
+              <input onChange={(e) => setuname(e.target.value)} disabled={!disable} value={uname} className='mt-2 mb-2 text-center w-100' type="text" placeholder='Enter your name' />
+              <input onChange={(e) => setuage(e.target.value)} disabled={!disable} value={uage} className='mt-2 mb-2 text-center w-100' type="number" placeholder='Enter your age' />
+              <input onChange={(e) => setuaddress(e.target.value)} disabled={!disable} value={uaddress} className='mt-2 mb-2 text-center w-100' type="text" placeholder='Enter your Address' />
               <br />
-              <button className='btn text-light bg-success text-center w-100 mt-2 mb-2'>Update</button>
+              <button onClick={() => handleUpdateClick()} disabled={!disable} className='btn text-light bg-success text-center w-100 mt-2 mb-2'>Update</button>
             </div>
           </div>
         </div>
@@ -50,54 +175,47 @@ export default function Home() {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>1</td>
-                    <td>Md Emon Hossen</td>
-                    <td>20</td>
-                    <td>Konabari,gazipur,Dhaka,Bangladesh</td>
-                    <td className='d-flex justify-content-around'>
-                      <button className='btn btn-success'>
-                        Edit
-                      </button>
-                      <button className='btn btn-danger'>
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>2</td>
-                    <td>Imran Hossen Jowel</td>
-                    <td>24</td>
-                    <td>Konabari,gazipur,Dhaka,Bangladesh</td>
-                    <td className='d-flex justify-content-around'>
-                      <button className='btn btn-success'>
-                        Edit
-                      </button>
-                      <button className='btn btn-danger'>
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>3</td>
-                    <td>Md Alamin Hossen</td>
-                    <td>6</td>
-                    <td>Konabari,gazipur,Dhaka,Bangladesh</td>
-                    <td className='d-flex justify-content-around'>
-                      <button className='btn btn-success'>
-                        Edit
-                      </button>
-                      <button className='btn btn-danger'>
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
+
+                  {/* mapping data */}
+                  {data.data.map((singledata, index) => {
+                    return (
+                      < tr key={index}>
+                        <td>{index + 1}</td>
+                        <td>{singledata.name}</td>
+                        <td>{singledata.age}</td>
+                        <td>{singledata.address}</td>
+                        <td className='d-flex justify-content-around'>
+                          <button onClick={() => { handleEditClick(singledata.id) }} className='btn btn-success'>
+                            Edit
+                          </button>
+                          <button onClick={() => { handleDeleteClick(singledata.id) }} className='btn btn-danger'>
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    )
+                  })}
+
                 </tbody>
               </table>
             </div>
           </div>
         </div>
+        <ToastContainer />
       </main>
     </>
   )
+}
+
+
+
+export async function getServerSideProps(context) {
+
+  const res = await fetch("http://localhost:3000/api");
+  const data = await res.json();
+
+
+  return {
+    props: { data }, // will be passed to the page component as props
+  }
 }
