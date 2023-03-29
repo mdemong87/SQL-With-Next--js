@@ -26,7 +26,7 @@ export default function Home({ data }) {
   async function handlePostClick() {
 
     if (name !== "" && age !== "" && address !== "") {
-      const respose = await fetch(`${NEXT_PUBLIC_BASE_URL}/api`, {
+      const respose = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api`, {
         method: "POST",
         headers: {
           "Content-Type": "Application/json",
@@ -61,7 +61,7 @@ export default function Home({ data }) {
   //handle edite click function
   async function handleEditClick(id) {
     setdisable(true);
-    const respose = await fetch(`${NEXT_PUBLIC_BASE_URL}/api/${id}`);
+    const respose = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/${id}`);
     const res = await respose.json();
     setuname(res.data[0].name);
     setuage(res.data[0].age);
@@ -78,7 +78,7 @@ export default function Home({ data }) {
   // handle delete click function
   async function handleDeleteClick(id) {
 
-    const respose = await fetch(`${NEXT_PUBLIC_BASE_URL}/api/${id}`, {
+    const respose = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/${id}`, {
       method: "DELETE",
     });
     const res = await respose.json();
@@ -95,7 +95,7 @@ export default function Home({ data }) {
 
   //handle update Click Function
   async function handleUpdateClick() {
-    const respose = await fetch(`${NEXT_PUBLIC_BASE_URL}/api/${updateId}`, {
+    const respose = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/${updateId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "Application/json"
