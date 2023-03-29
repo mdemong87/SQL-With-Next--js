@@ -27,7 +27,7 @@ const forget = (req, res) => {
     const { id } = req.query;
 
     //sql commend
-    var sql = `SELECT * FROM stuents WHERE id = ${id}`;
+    var sql = `SELECT * FROM users WHERE id = ${id}`;
 
     connection.query(sql, (err, result) => {
         if (!err) {
@@ -61,7 +61,7 @@ const forput = (req, res) => {
 
 
 
-    const sql = `UPDATE stuents SET name=?,age=?,address=? WHERE id = ${id}`;
+    const sql = `UPDATE users SET name=?,age=?,address=? WHERE id = ${id}`;
 
     connection.query(sql, [uname, uage, uaddress], (err, result) => {
         if (!err) {
@@ -90,7 +90,7 @@ const fordelete = (req, res) => {
     const { id } = req.query;
 
     //sql commend
-    var sql = `DELETE FROM stuents WHERE id = ${id}`;
+    var sql = `DELETE FROM users WHERE id = ${id}`;
 
     connection.query(sql, (err) => {
         if (!err) {

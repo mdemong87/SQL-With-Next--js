@@ -23,7 +23,7 @@ export default async function handler(req, res) {
 const forget = (req, res) => {
 
   //sql commend
-  const sql = "SELECT * FROM stuents"
+  const sql = "SELECT * FROM users"
 
   connection.query(sql, (err, result) => {
     if (!err) {
@@ -52,7 +52,7 @@ const forpost = (req, res) => {
   const { name, age, address } = req.body;
 
   // sql commend
-  const sql = "INSERT INTO stuents(name,age,address) VALUES('" + name + "','" + age + "','" + address + "')";
+  const sql = "INSERT INTO users(name,age,address) VALUES('" + name + "','" + age + "','" + address + "')";
 
   connection.query(sql, (err, result) => {
     if (!err) {
@@ -73,24 +73,6 @@ const forpost = (req, res) => {
 
 }
 
-
-//hanlde put method
-const forput = (req, res) => {
-  res.status(200).json({
-    success: true,
-    messege: req.method
-  });
-}
-
-
-
-//hanlde delete method
-const fordelete = (req, res) => {
-  res.status(200).json({
-    success: true,
-    messege: req.method
-  });
-}
 
 
 

@@ -4,10 +4,10 @@ import mysql from "mysql";
 
 // create the connection to database
 const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: "",
-    database: 'sql-practise'
+    host: process.env.NEXT_PUBLIC_DaTABSE_HOSTNAME,
+    user: process.env.NEXT_PUBLIC_USER_NAME,
+    password: process.env.NEXT_PUBLIC_DaTABSE_PASSWORD,
+    database: process.env.NEXT_PUBLIC_DaTABSE_NAME
 });
 
 connection.connect((err) => {
